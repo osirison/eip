@@ -2,6 +2,10 @@ node_modules
 .next
 coverage
 tsconfig.tsbuildinfo
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
 
 .env
 .env.local

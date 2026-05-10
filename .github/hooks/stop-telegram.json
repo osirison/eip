@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "hooks": {
+    "Stop": [
+      {
+        "bash": "node .github/hooks/notify-telegram.mjs",
+        "powershell": "node .github/hooks/notify-telegram.mjs",
+        "timeoutSec": 5
+      }
+    ]
+  }
+}

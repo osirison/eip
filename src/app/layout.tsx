@@ -15,8 +15,8 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EIP GitLab Reporting",
-  description: "Executive-grade GitLab reporting for a single project or group target.",
+  title: "EIP Delivery Intelligence",
+  description: "GitLab delivery intelligence for pods, projects, and groups.",
 };
 
 export default function RootLayout({

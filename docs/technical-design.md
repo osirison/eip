@@ -2,159 +2,171 @@
 
 ## 1. Purpose
 
-Engineering Intelligence Platform (EIP) provides executive-grade reporting over engineering delivery signals. The target state supports portfolio-level reporting, AI-assisted analysis, governed access, and durable historical trend data. The initial proof of concept (POC) narrows scope to fast GitLab reporting for a single GitLab Project ID or Group ID while keeping the target-state architecture explicit.
+Engineering Intelligence Platform (EIP) provides executive-grade reporting over engineering delivery signals. The current implementation delivers a browser-facing Next.js application backed by FastAPI and PostgreSQL, while preserving a clean path toward future historical analytics, richer governance, and asynchronous ingestion.
 
-This document is the source of truth for the target-state architecture and records the deliberate POC cut.
+This document is the source of truth for the implemented architecture and the major capabilities still deferred.
 
 ## 2. Problem Statement
 
-Engineering leaders need a concise, trustworthy view of delivery health without manually stitching together merge request activity, reviewer load, and attention hotspots from GitLab. The system must turn source-system activity into high-signal reporting that is useful for directors and VPs, not expose raw API payloads.
+Engineering leaders need a concise, trustworthy view of delivery health without manually stitching together merge-request activity, reviewer load, and attention hotspots from GitLab. The system must turn source-system activity into high-signal reporting that is useful for directors and VPs, not expose raw API payloads or credentials to the browser.
 
 ## 3. Goals
 
-- Provide executive reporting for GitLab project and group targets.
-- Highlight current delivery posture with KPIs, attention flags, and recent merge activity.
-- Keep GitLab credentials server-side only.
-- Preserve a clean separation between the target-state platform architecture and the narrower POC delivery shape.
-- Enable local development and tests without live GitLab credentials by using fixtures for aggregation logic.
+- Provide executive reporting for GitLab projects, groups, and reusable pods.
+- Highlight delivery posture with KPIs, attention flags, target coverage, and recent merge activity.
+- Keep GitLab credentials and upstream access server-side only.
+- Persist pod definitions in PostgreSQL.
+- Preserve a strict separation between the browser-facing Next.js app and the reporting backend.
+- Enable local development and automated tests without live GitLab credentials through fixtures.
 
-## 4. Non-Goals For The POC
+## 4. Current Non-Goals
 
-- Multi-tenant authorization and permissions.
-- Enterprise security hardening beyond basic server-side secret handling.
-- Durable storage in PostgreSQL.
+- Multi-tenant authorization and fine-grained permissions.
+- Enterprise hardening beyond server-side secret handling and typed backend boundaries.
+- Durable report snapshots and historical trend storage.
 - Background processing with Celery and Redis.
-- FastAPI service decomposition.
 - Copilot ingestion pipelines.
 - Ask Your Data or natural-language analytics.
-- Hierarchical rollups beyond a single GitLab project or group lookup.
-- Historical trending beyond the recent merge-request analysis window.
+- Cross-source connectors beyond GitLab.
 
-## 5. Users And Primary Flow
+## 5. Users And Primary Flows
 
 ### Users
 
-- Engineering executives who need fast status reporting.
-- Engineering managers who need to inspect recent merge-request throughput and review load.
+- Engineering executives who need a fast operational view of delivery health.
+- Engineering managers who need to inspect queue quality, reviewer load, and repository posture.
 
-### Primary POC Flow
+### Pod Flow
 
-1. User opens the app.
-2. User selects either Project or Group target type.
-3. User enters a GitLab numeric identifier.
-4. The application generates a concise report from recent GitLab merge-request activity.
-5. The user reviews KPIs, recent merge requests, contributor and reviewer rollups, and attention flags.
+1. User opens the workbench.
+2. User selects a saved pod from the left rail.
+3. Next.js fetches pod metadata and a pod report through thin proxy routes.
+4. FastAPI loads pod targets from PostgreSQL, aggregates GitLab data, and returns a single executive report.
+5. The user reviews overview metrics, target coverage, merge requests, contributor activity, reviewer distribution, and attention flags.
 
-## 6. Target-State Architecture
+### Ad-Hoc Flow
 
-### 6.1 Frontend
+1. User chooses a project or group target type.
+2. User enters a GitLab numeric identifier.
+3. Next.js proxies the request to FastAPI.
+4. FastAPI resolves the target, queries GitLab or fixtures, and returns the report.
 
-- Next.js application for authenticated end-user experiences.
-- Shadcn/UI component system for consistent, enterprise-quality reporting surfaces.
-- Dashboard-oriented views for executive summaries, drill-downs, and historical comparisons.
+## 6. Implemented Architecture
 
-### 6.2 API Layer
+### 6.1 Browser Application
 
-- FastAPI service boundary for reporting APIs, orchestration, and policy enforcement.
-- Typed REST endpoints for report generation, trend retrieval, metadata lookup, and future conversational analytics.
+- Next.js App Router remains the only browser-facing application.
+- The main workbench renders pod selection, ad-hoc reporting, and grouped report sections.
+- Browser clients never call GitLab directly.
 
-### 6.3 Data And Jobs
+### 6.2 Next.js Proxy Layer
 
-- PostgreSQL for durable report snapshots, entity metadata, historical measures, and audit-friendly storage.
-- Redis for cache coordination and queue brokering.
-- Celery workers for scheduled ingestion, enrichment, and backfill tasks.
+- `/api/report` proxies ad-hoc report generation.
+- `/api/pods` lists and creates pods.
+- `/api/pods/:podId` returns pod detail.
+- `/api/pods/:podId/report` generates a pod-level report.
+- Proxy handlers validate input and normalize backend errors for the UI.
 
-### 6.4 Data Sources And Analytics
+### 6.3 FastAPI Backend
 
-- GitLab as the initial engineering system of record.
-- Future connectors for additional delivery systems.
-- AI-assisted summarization and question-answering over curated reporting datasets.
-- Copilot ingestion and Ask Your Data capabilities layered on normalized stored data, not directly on raw browser responses.
+- FastAPI owns pod persistence, GitLab access, fixture or live mode, and report aggregation.
+- Core endpoints are:
+  - `GET /healthz`
+  - `GET /v1/pods`
+  - `POST /v1/pods`
+  - `GET /v1/pods/{podId}`
+  - `POST /v1/reports/ad-hoc`
+  - `POST /v1/reports/pods/{podId}`
+- Service boundaries are split across pod management, GitLab gateway behavior, and reporting aggregation.
 
-### 6.5 Security And Governance
+### 6.4 Data Layer
 
-- Server-side secret storage only.
-- Role-based access controls and scoped target visibility in the target state.
-- Auditable report access and configuration changes.
-- Separation between user-facing applications and source-system credentials.
+- PostgreSQL stores pods and pod targets.
+- Alembic manages schema evolution.
+- Development seeding provides a reusable starter pod.
+- The current release persists pod configuration, not historical report snapshots.
 
-## 7. POC Delivery Architecture
+### 6.5 GitLab Integration
 
-The POC intentionally collapses the system into a single Next.js App Router application to maximize delivery speed while preserving clean seams for later extraction.
+- FastAPI can run in fixture mode or live GitLab mode.
+- The backend normalizes GitLab base URLs to `/api/v4`.
+- Pod reports deduplicate overlapping merge requests across project and group targets.
+- The reporting service computes open queue state, stale work, oversized changes, unreviewed work, target coverage, per-project posture, and reviewer concentration signals.
 
-### Included In The POC
+### 6.6 Security Boundary
 
-- Next.js App Router UI and server routes in one codebase.
-- Server-side GitLab API access using environment variables.
-- Typed aggregation logic that transforms recent merge-request activity into executive reporting.
-- Fixture-backed development mode when live credentials are unavailable.
-- Focused unit tests for aggregation behavior.
+- GitLab tokens are stored only in the backend environment.
+- The frontend only needs the backend base URL.
+- The browser receives normalized report data rather than raw GitLab responses.
 
-### Deferred From The POC
+## 7. Future-State Extensions
 
-- FastAPI service extraction.
-- PostgreSQL persistence and report history.
-- Celery and Redis asynchronous workflows.
-- Copilot ingestion.
-- Ask Your Data.
-- Hierarchy, permissions, and enterprise security hardening.
+- Historical report snapshots and trend queries in PostgreSQL.
+- Redis and Celery for scheduled ingestion, caching, and backfills.
+- Role-based access controls and auditable configuration changes.
+- Additional engineering-system connectors.
+- AI-assisted summarization and conversational analytics on curated stored data.
 
 ## 8. Domain Model
 
 ### Reporting Target
 
-- `type`: `project` or `group`
-- `id`: GitLab numeric identifier
+- `type`: `project`, `group`, or `pod`
+- `id`: GitLab numeric identifier or pod UUID
 - `name`: human-readable target name
-- `path`: GitLab namespace path
-- `web_url`: browser URL when available
+- `path`: GitLab namespace path or pod slug
+- `webUrl`: browser URL when available
+
+### Pod
+
+- `id`, `slug`, `name`, `description`
+- ordered list of targets
+- each target includes `targetType`, `targetId`, and `displayOrder`
 
 ### Merge Request Fact
 
-- `id`, `iid`, `project_id`
+- `id`, `iid`, `projectId`, `projectPath`
 - `title`, `state`, `draft`
-- `author`
-- `reviewers`
-- `created_at`, `updated_at`, `merged_at`
-- `changes_count`
-- `web_url`
+- `author`, `reviewers`
+- `createdAt`, `updatedAt`, `mergedAt`
+- `changesCount`, `webUrl`
 
 ### Executive Report
 
-- target metadata
-- generated timestamp
-- data source indicator (`live` or `fixture`)
-- analysis window size
-- summary KPIs
-- executive summary insights
-- recent merge-request table rows
-- contributor rollup
-- reviewer rollup
+- target metadata and generation metadata
+- KPIs for merge throughput, queue state, and active footprint
+- executive summary statements
+- open queue breakdown
+- recent merge requests and stale open merge requests
+- contributor and reviewer rollups
+- reviewer concentration signal
 - attention flags
+- target coverage and per-project breakdown
 
-## 9. POC Functional Requirements
+## 9. Functional Requirements
 
 ### Required
 
-- Accept Project or Group as the reporting target type.
-- Accept a GitLab ID and generate a report.
-- Use `GITLAB_BASE_URL` and `GITLAB_TOKEN` server-side only.
-- Present summary KPIs.
-- Present a recent merge-request table.
-- Present contributor and reviewer rollups.
-- Present simple attention flags such as stale merge requests and oversized changes.
+- Accept project and group IDs for ad-hoc report generation.
+- Persist reusable pods made from project IDs and group IDs.
+- Generate pod-level reports with target overlap deduplication.
+- Keep `GITLAB_TOKEN` backend-only.
+- Present summary KPIs, queue breakdown, target coverage, merge requests, contributor rollups, reviewer rollups, and attention flags.
 - Handle loading, empty, and error states cleanly.
-- Continue to work locally without live credentials through fixtures for aggregation logic.
+- Continue to work locally without live credentials through fixtures.
 
-### Nice To Have Within POC
+### Included Enhancements
 
-- Support both project and group reporting in the first pass.
-- Provide short executive summary statements derived from report metrics.
-- Show whether the report used fixtures or live data.
+- GitLab-inspired workbench styling.
+- Left-hand navigation that groups report sections.
+- Stronger reviewer concentration and queue-quality reporting.
+- Per-project breakdown across pod scope.
 
-## 10. API Contract For The POC
+## 10. API Contracts
 
-### `POST /api/report`
+### Next.js Proxy Surface
+
+#### `POST /api/report`
 
 Request body:
 
@@ -165,91 +177,92 @@ Request body:
 }
 ```
 
-Successful response shape:
+#### `GET /api/pods`
+
+Returns saved pods with summary metadata.
+
+#### `POST /api/pods`
+
+Request body:
 
 ```json
 {
-  "report": {
-    "generatedAt": "2026-05-10T12:00:00.000Z",
-    "dataSource": "live",
-    "target": {
-      "type": "project",
-      "id": "12345",
-      "name": "Payments Platform",
-      "path": "platform/payments"
-    },
-    "window": {
-      "mergeRequestsAnalyzed": 25,
-      "label": "Recent merge requests"
-    },
-    "kpis": {},
-    "summary": [],
-    "recentMergeRequests": [],
-    "contributorRollup": [],
-    "reviewerRollup": [],
-    "attentionFlags": []
-  }
+  "name": "Platform Foundation",
+  "description": "Core platform scope",
+  "targets": [
+    { "targetType": "group", "targetId": "7" },
+    { "targetType": "project", "targetId": "1042" }
+  ]
 }
 ```
 
-Error semantics:
+#### `GET /api/pods/:podId`
 
-- `400` for invalid target type or identifier.
-- `404` when the GitLab target is not found.
+Returns pod detail including ordered targets.
+
+#### `POST /api/pods/:podId/report`
+
+Returns an executive report for the persisted pod.
+
+### Backend Error Semantics
+
+- `400` for invalid input.
+- `404` when a pod or GitLab target cannot be found.
+- `409` for pod slug conflicts.
 - `502` for upstream GitLab failures.
 
 ## 11. Reporting Logic
 
-The POC report is derived from a recent merge-request analysis window.
+The report is derived from a recent merge-request analysis window and applies the same aggregation rules for ad-hoc and pod scopes.
 
 ### KPIs
 
 - Merge requests analyzed.
 - Open merge requests.
 - Merge requests merged in the last 30 days.
-- Median merge time for merged merge requests in the analysis window.
+- Median merge time for merged merge requests.
+- Active authors, active reviewers, and active projects.
 
-### Rollups
+### Queue And Review Signals
 
-- Contributor authored count, merged count, and open count.
-- Reviewer review assignments across the analysis window.
+- Open queue totals for stale, draft, oversized, and unreviewed work.
+- Reviewer concentration share and overloaded reviewer detection.
+- Attention flags for stale, oversized, unreviewed, and concentrated-reviewer conditions.
 
-### Attention Flags
+### Coverage And Breakdown
 
-- Stale open merge requests older than a configurable threshold.
-- Oversized merge requests above a configurable changed-lines threshold.
-- Open merge requests with no reviewer assigned.
+- Requested versus resolved targets.
+- Partial-failure reporting when one or more targets fail.
+- Deduplicated merge-request contribution counts.
+- Per-project breakdown of throughput and queue posture.
 
 ## 12. Environment Configuration
 
-- `GITLAB_BASE_URL`: GitLab host or API base URL. If the value does not end in `/api/v4`, the application appends it.
-- `GITLAB_TOKEN`: GitLab token used only on the server.
-- `GITLAB_USE_FIXTURES`: Optional local-development override to force fixture mode.
+### Frontend
+
+- `EIP_BACKEND_BASE_URL`: Base URL for the FastAPI service.
+
+### Backend
+
+- `DATABASE_URL`: SQLAlchemy database URL.
+- `GITLAB_BASE_URL`: GitLab host or API base URL.
+- `GITLAB_TOKEN`: Backend-only GitLab token.
+- `GITLAB_USE_FIXTURES`: Force fixture mode when `true`.
+- `GITLAB_ANALYSIS_LIMIT`: Recent merge-request analysis window size.
+- `STALE_DAYS_THRESHOLD`: Threshold for stale open work.
+- `OVERSIZED_CHANGES_THRESHOLD`: Threshold for oversized merge requests.
 
 ## 13. Testing Strategy
 
-- Unit tests cover report aggregation and flag generation using deterministic fixtures.
-- Validation commands for the touched scope include lint, typecheck, and targeted tests.
-- Live GitLab integration remains runtime-verified through manual local testing when credentials are available.
+- Vitest covers Next proxy routes and the server-side backend client.
+- Pytest covers FastAPI endpoints and reporting services.
+- Backend live-mode behavior is exercised with `httpx.MockTransport` rather than real GitLab credentials.
+- Validation for touched code should include lint, typecheck, frontend tests, and backend tests.
 
-## 14. Delivery Plan
+## 14. Exit Criteria
 
-### Epic 1
-
-Planning artifacts, target-state TDD, and single-app POC foundation.
-
-### Epic 2
-
-GitLab client and report-generation engine with fixture-backed tests.
-
-### Epic 3
-
-Executive report UI, loading and empty states, and local run guidance.
-
-## 15. Exit Criteria For This POC
-
-- A user can generate a GitLab executive report from a project or group ID.
-- The report is concise and visually credible for executive review.
-- The implementation runs as a single Next.js application.
-- GitLab credentials never leave the server runtime.
-- The codebase contains a clear migration path toward the target-state architecture.
+- A user can generate an executive report from a project, group, or saved pod.
+- Pod definitions persist in PostgreSQL.
+- GitLab credentials never leave the FastAPI runtime.
+- The UI exposes grouped operational sections and richer delivery signals.
+- The codebase maintains a clean path toward asynchronous jobs, history, and governance.
