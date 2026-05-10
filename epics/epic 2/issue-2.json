@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-2-ISSUE-2",
+  "epic_id": "EPIC-2",
+  "title": "Aggregate GitLab activity into executive reporting",
+  "summary": "Transform recent merge-request facts into KPIs, rollups, executive summary statements, and attention flags.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-2-ISSUE-1"
+  ],
+  "deliverables": [
+    "Report aggregation logic",
+    "Executive summary generation",
+    "Attention-flag thresholds"
+  ],
+  "acceptance_criteria": [
+    "The report output is high signal and not raw JSON",
+    "Stale and oversized merge requests are flagged",
+    "Contributor and reviewer rollups are included"
+  ],
+  "verification": [
+    "Targeted unit tests against fixture datasets"
+  ],
+  "size": "M",
+  "notes": [
+    "Keep the aggregation layer pure and testable."
+  ]
+}

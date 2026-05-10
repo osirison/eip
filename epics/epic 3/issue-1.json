@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-3-ISSUE-1",
+  "epic_id": "EPIC-3",
+  "title": "Build the report generation workflow",
+  "summary": "Create the input workflow for selecting target type, entering an ID, and requesting report generation.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-2-ISSUE-1"
+  ],
+  "deliverables": [
+    "Client-side report request form",
+    "API route integration",
+    "State handling for loading and errors"
+  ],
+  "acceptance_criteria": [
+    "Users can request a report for a project or group ID",
+    "The form handles invalid input and backend failures cleanly"
+  ],
+  "verification": [
+    "Manual local check or build-time validation of the page"
+  ],
+  "size": "S",
+  "notes": [
+    "Use Shadcn-style inputs, buttons, and layout primitives."
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-3-ISSUE-3",
+  "epic_id": "EPIC-3",
+  "title": "Document local development and POC operation",
+  "summary": "Add concise setup guidance for running the app with live GitLab credentials or fixtures.",
+  "status": "done",
+  "priority": "P1",
+  "depends_on": [
+    "EPIC-3-ISSUE-2",
+    "EPIC-2-ISSUE-3"
+  ],
+  "deliverables": [
+    "README or run guide",
+    "Environment variable reference"
+  ],
+  "acceptance_criteria": [
+    "A developer can run the app locally without guessing required env vars",
+    "Fixture mode is explained clearly"
+  ],
+  "verification": [
+    "Manual review of local run steps"
+  ],
+  "size": "S",
+  "notes": [
+    "Keep documentation concise and specific to the POC."
+  ]
+}

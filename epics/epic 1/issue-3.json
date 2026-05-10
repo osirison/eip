@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-1-ISSUE-3",
+  "epic_id": "EPIC-1",
+  "title": "Scaffold the single-app POC foundation",
+  "summary": "Create a Next.js TypeScript app with Tailwind and a Shadcn-friendly structure to support the first vertical slice.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-1-ISSUE-2"
+  ],
+  "deliverables": [
+    "package.json",
+    "Next.js app scaffold",
+    "Tailwind configuration",
+    "Shadcn-compatible UI primitives"
+  ],
+  "acceptance_criteria": [
+    "The repo builds as a single Next.js App Router application",
+    "The UI foundation is suitable for enterprise-quality reporting surfaces"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run typecheck"
+  ],
+  "size": "M",
+  "notes": [
+    "Implementation begins immediately after the planning artifacts are created."
+  ]
+}

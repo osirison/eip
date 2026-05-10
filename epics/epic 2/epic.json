@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "epic",
+  "id": "EPIC-2",
+  "title": "GitLab report engine",
+  "objective": "Implement server-side GitLab integration, report aggregation, fixture fallback, and targeted tests for executive reporting.",
+  "status": "done",
+  "priority": "P0",
+  "dependencies": [
+    "EPIC-1"
+  ],
+  "scope_in": [
+    "Typed GitLab client",
+    "Project and group report generation",
+    "Aggregation logic for KPIs, rollups, and flags",
+    "Fixture-backed development and tests"
+  ],
+  "scope_out": [
+    "Historical persistence",
+    "Scheduled ingestion",
+    "Cross-system data fusion"
+  ],
+  "deliverables": [
+    "Server-side GitLab integration",
+    "Report-engine modules",
+    "Aggregation tests"
+  ],
+  "acceptance_criteria": [
+    "A project or group ID can be transformed into a report payload",
+    "The report includes KPIs, recent MRs, rollups, and attention flags",
+    "Tests validate the aggregation behavior with fixtures"
+  ],
+  "verification": [
+    "Targeted unit tests for aggregation logic",
+    "Typecheck of the report engine"
+  ],
+  "size": "L",
+  "notes": [
+    "Use recent merge-request activity rather than raw GitLab payloads for the executive view."
+  ]
+}

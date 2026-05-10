@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "epic",
+  "id": "EPIC-3",
+  "title": "Executive report experience and polish",
+  "objective": "Deliver an elegant executive dashboard experience with clean states, high-signal report presentation, and concise local run guidance.",
+  "status": "done",
+  "priority": "P1",
+  "dependencies": [
+    "EPIC-1",
+    "EPIC-2"
+  ],
+  "scope_in": [
+    "Report generation form",
+    "Loading, error, and empty states",
+    "Executive-quality report presentation",
+    "Local run documentation"
+  ],
+  "scope_out": [
+    "Advanced personalization",
+    "Role-specific dashboards",
+    "Historical drill-down workflows"
+  ],
+  "deliverables": [
+    "Primary application page",
+    "Executive report components",
+    "README or local setup guidance"
+  ],
+  "acceptance_criteria": [
+    "The interface feels enterprise-quality and minimalist",
+    "Loading, error, and empty states are clearly handled",
+    "A developer can run the app locally with fixtures or live credentials"
+  ],
+  "verification": [
+    "npm run lint",
+    "npm run typecheck"
+  ],
+  "size": "M",
+  "notes": [
+    "The UI should be restrained, legible, and high signal."
+  ]
+}

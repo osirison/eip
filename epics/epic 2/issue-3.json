@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-2-ISSUE-3",
+  "epic_id": "EPIC-2",
+  "title": "Add fixture-backed tests and local fallback mode",
+  "summary": "Ensure local development and tests work without live GitLab credentials by supplying deterministic fixtures.",
+  "status": "done",
+  "priority": "P1",
+  "depends_on": [
+    "EPIC-2-ISSUE-2"
+  ],
+  "deliverables": [
+    "Fixture datasets",
+    "Aggregation unit tests",
+    "Optional runtime fixture mode"
+  ],
+  "acceptance_criteria": [
+    "npm test runs without external credentials",
+    "The app can return a report from fixtures when configured"
+  ],
+  "verification": [
+    "npm test"
+  ],
+  "size": "S",
+  "notes": [
+    "Fixture mode is a delivery accelerator, not a production path."
+  ]
+}

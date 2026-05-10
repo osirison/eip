@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-1-ISSUE-1",
+  "epic_id": "EPIC-1",
+  "title": "Persist the target-state technical design",
+  "summary": "Author docs/technical-design.md as the canonical target-state architecture reference and record the POC cut.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [],
+  "deliverables": [
+    "docs/technical-design.md"
+  ],
+  "acceptance_criteria": [
+    "The design doc describes the target-state architecture and the narrower POC scope",
+    "The doc captures deferred capabilities and migration seams"
+  ],
+  "verification": [
+    "Manual review of the document against approved decisions"
+  ],
+  "size": "S",
+  "notes": [
+    "This issue is complete once the TDD exists in the repo."
+  ]
+}

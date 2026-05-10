@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-2-ISSUE-1",
+  "epic_id": "EPIC-2",
+  "title": "Implement the GitLab target and merge-request client",
+  "summary": "Add server-side GitLab access for project and group targets using environment-driven configuration.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-1-ISSUE-3"
+  ],
+  "deliverables": [
+    "GitLab client utilities",
+    "Typed target and merge-request mapping",
+    "Error handling for not found and upstream failures"
+  ],
+  "acceptance_criteria": [
+    "GitLab requests run only on the server",
+    "The client supports both project and group targets",
+    "The base URL and token are configurable via env vars"
+  ],
+  "verification": [
+    "Typecheck of the GitLab client layer"
+  ],
+  "size": "M",
+  "notes": [
+    "Use fixture mode when credentials are unavailable."
+  ]
+}

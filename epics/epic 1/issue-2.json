@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-1-ISSUE-2",
+  "epic_id": "EPIC-1",
+  "title": "Create pragmatic planning artifacts for the POC",
+  "summary": "Add epic.json and issue-{n}.json files for the approved POC using a simple schema that is easy to extend.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-1-ISSUE-1"
+  ],
+  "deliverables": [
+    "epics/epic 1/*",
+    "epics/epic 2/*",
+    "epics/epic 3/*"
+  ],
+  "acceptance_criteria": [
+    "Three epic folders exist with epic.json and issue JSON files",
+    "The schema includes identifiers, scope, dependencies, acceptance criteria, and verification fields"
+  ],
+  "verification": [
+    "JSON parsing of all epic and issue artifacts"
+  ],
+  "size": "S",
+  "notes": [
+    "The schema is intentionally lightweight and repo-local."
+  ]
+}

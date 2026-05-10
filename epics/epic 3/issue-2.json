@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "issue",
+  "id": "EPIC-3-ISSUE-2",
+  "epic_id": "EPIC-3",
+  "title": "Present the executive report",
+  "summary": "Render a concise, elegant dashboard for KPIs, summaries, recent merge requests, rollups, and attention flags.",
+  "status": "done",
+  "priority": "P0",
+  "depends_on": [
+    "EPIC-3-ISSUE-1",
+    "EPIC-2-ISSUE-2"
+  ],
+  "deliverables": [
+    "Summary KPI cards",
+    "Recent MR table",
+    "Contributor and reviewer rollups",
+    "Attention-flag presentation"
+  ],
+  "acceptance_criteria": [
+    "The report is useful to an executive audience",
+    "The dashboard avoids raw API payload presentation",
+    "The UI remains legible on desktop and mobile"
+  ],
+  "verification": [
+    "Lint and typecheck of the UI components"
+  ],
+  "size": "M",
+  "notes": [
+    "Favor clarity, spacing, and typography over ornament."
+  ]
+}

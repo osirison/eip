@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "epic",
+  "id": "EPIC-1",
+  "title": "Planning artifacts and POC foundation",
+  "objective": "Define the target-state architecture reference, establish a pragmatic planning-artifact schema, and scaffold the single-app POC foundation for GitLab reporting.",
+  "status": "done",
+  "priority": "P0",
+  "dependencies": [],
+  "scope_in": [
+    "Target-state technical design document",
+    "Epic and issue JSON artifacts",
+    "Single Next.js App Router scaffold",
+    "Tailwind and Shadcn-friendly component structure",
+    "Server-side environment configuration"
+  ],
+  "scope_out": [
+    "FastAPI service split",
+    "PostgreSQL persistence",
+    "Background workers",
+    "Permissions and enterprise hardening"
+  ],
+  "deliverables": [
+    "docs/technical-design.md",
+    "epics/epic 1/*",
+    "Base application scaffold and UI system"
+  ],
+  "acceptance_criteria": [
+    "The repo contains a target-state technical design document",
+    "The repo contains pragmatic epic and issue artifacts for the POC",
+    "The application scaffold supports immediate feature implementation"
+  ],
+  "verification": [
+    "JSON planning artifacts parse successfully",
+    "The scaffold passes lint and typecheck"
+  ],
+  "size": "M",
+  "notes": [
+    "The POC intentionally collapses the target-state architecture into a single Next.js app for speed.",
+    "GitLab secrets stay server-side even though enterprise security hardening is deferred."
+  ]
+}
