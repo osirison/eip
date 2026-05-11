@@ -685,7 +685,8 @@ export function buildTelegramMessage(metadata) {
   }
 
   parts.push(`title: ${metadata.title || "Untitled"}`);
-  parts.push(`outcome: ${metadata.outcome || "Completed"}`);
+  parts.push(`status: ${metadata.status || "Completed"}`);
+  parts.push(`summary: ${metadata.summary || metadata.outcome || "Trusted transcript recap unavailable."}`);
   parts.push(`elapsed: ${metadata.elapsed || "unknown"}`);
 
   if (metadata.timestamp) {
@@ -800,8 +801,9 @@ async function notifyStop({ env, fetchImpl, metadata, transcriptSessionId }) {
       fetchImpl,
       text: buildTelegramMessage({
         elapsed: formatDuration(computeDurationMs(sessionState?.startedAtMs, metadata.timestamp)),
-        outcome: await extractOutcomeFromTranscriptPath(env, metadata.transcriptPath, transcriptSessionId, metadata.workspaceRoot),
         sessionId: metadata.sessionId,
+        status: "Completed",
+        summary: await extractOutcomeFromTranscriptPath(env, metadata.transcriptPath, transcriptSessionId, metadata.workspaceRoot),
         timestamp: metadata.timestamp,
         title: sessionState?.title,
         workspaceName: metadata.workspaceName || sessionState?.workspaceName,

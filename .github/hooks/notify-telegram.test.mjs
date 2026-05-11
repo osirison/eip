@@ -196,7 +196,7 @@ test("sanitizes the documented stop payload shape before building the Telegram m
     buildTelegramMessage({
       ...metadata,
       elapsed: "5m 01s",
-      outcome: "Updated stop notifications safely.",
+      summary: "Updated stop notifications safely.",
       title: "Implement Telegram hook update",
     }),
     [
@@ -204,7 +204,8 @@ test("sanitizes the documented stop payload shape before building the Telegram m
       "workspace: eip",
       "session: session-",
       "title: Implement Telegram hook update",
-      "outcome: Updated stop notifications safely.",
+      "status: Completed",
+      "summary: Updated stop notifications safely.",
       "elapsed: 5m 01s",
       "time: 2026-05-10T23:45:01.000Z",
     ].join("\n"),
@@ -347,7 +348,8 @@ test("posts enriched sanitized metadata to Telegram and cleans session state", a
           "workspace: eip",
           `session: ${sessionId.slice(0, 8)}`,
           "title: Check password [redacted] and token [redacted] in prompt",
-          "outcome: Completed with token [redacted] and password [redacted].",
+          "status: Completed",
+          "summary: Completed with token [redacted] and password [redacted].",
           "elapsed: 5m 01s",
           "time: 2026-05-10T23:45:01.000Z",
         ].join("\n"),
@@ -444,7 +446,19 @@ test("rejects fake workspaceStorage transcript paths outside the trusted VS Code
 
     assert.deepEqual(result, { delivered: true, reason: "sent" });
     assert.equal(requests.length, 1);
-    assert.match(requests[0].text, /outcome: Completed/);
+    assert.equal(
+      requests[0].text,
+      [
+        "VS Code agent run finished",
+        "workspace: eip",
+        `session: ${sessionId.slice(0, 8)}`,
+        "title: Verify telegram hook",
+        "status: Completed",
+        "summary: Trusted transcript recap unavailable.",
+        "elapsed: 5m 01s",
+        "time: 2026-05-10T23:45:01.000Z",
+      ].join("\n"),
+    );
     assert.doesNotMatch(requests[0].text, /abc123/);
     assert.deepEqual(await listStateFiles(stateHome), []);
   } finally {
