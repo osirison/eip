@@ -1,10 +1,24 @@
 {
   "version": 1,
   "hooks": {
+    "SessionStart": [
+      {
+        "bash": "node .github/hooks/notify-telegram.mjs start",
+        "powershell": "node .github/hooks/notify-telegram.mjs start",
+        "timeoutSec": 5
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "bash": "node .github/hooks/notify-telegram.mjs prompt",
+        "powershell": "node .github/hooks/notify-telegram.mjs prompt",
+        "timeoutSec": 5
+      }
+    ],
     "Stop": [
       {
-        "bash": "node .github/hooks/notify-telegram.mjs",
-        "powershell": "node .github/hooks/notify-telegram.mjs",
+        "bash": "node .github/hooks/notify-telegram.mjs stop",
+        "powershell": "node .github/hooks/notify-telegram.mjs stop",
         "timeoutSec": 5
       }
     ]

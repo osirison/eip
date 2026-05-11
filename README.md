@@ -97,7 +97,7 @@ Backend:
 
 - Export `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` in the local environment that launches VS Code if you want the workspace `Stop` hook to send a Telegram notification after an agent run completes.
 - `TELEGRAM_API_BASE_URL` is optional and only intended for local mock or proxy testing of the hook.
-- The hook reads those values directly from the local environment, exits `0` immediately when they are missing, sends only minimal sanitized metadata, and fails open on Telegram/API errors.
+- The hook reads those values directly from the local environment, keeps temporary session state outside the repo, includes a sanitized first-prompt title, final-answer outcome summary, and elapsed time, and fails open on missing config or Telegram/API errors.
 
 ## Validation
 
